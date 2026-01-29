@@ -1,8 +1,13 @@
 <div align="center">
 
-# Hi I'm Gustavo Navarro !
+<p align="center">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Gustavo%20Navarro&fontAlignY=41n" />
+</p>
 
 **Software Developer • Experience is the best teacher**
+
+--- 
+<br>
 
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=GustavoAdolfoNavarroPacheco&show_icons=true)
 
