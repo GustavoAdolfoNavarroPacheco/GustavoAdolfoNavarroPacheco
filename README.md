@@ -4,7 +4,7 @@
 
 **Software Developer • Experience is the best teacher**
 
-[![GitHub Streak](https://streak-stats.demolab.com?user=GustavoAdolfoNavarroPacheco&theme=transparent&mode=weekly)](https://git.io/streak-stats)
+[![GitHub Streak](https://streak-stats.demolab.com?user=GustavoAdolfoNavarroPacheco&theme=transparent&hide_border=true&mode=weekly)](https://git.io/streak-stats)
 
 
 </div>
