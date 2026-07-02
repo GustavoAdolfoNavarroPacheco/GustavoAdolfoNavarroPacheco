@@ -1,0 +1,68 @@
+<svg viewBox="0 0 1000 920" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ocho proyectos by Gustavo Navarro">
+  <style>
+    :root { --ink:#000000; --paper:#FFFFFF; }
+    @media (prefers-color-scheme:dark) { :root { --ink:#FFFFFF; --paper:#000000; } }
+    .mono { font-family:ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,"Liberation Mono",monospace; }
+    .row { opacity:0; animation:reveal .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .rule { stroke:var(--ink); stroke-width:1; }
+    .title { fill:var(--ink); font-size:17px; font-weight:700; letter-spacing:.8px; }
+    .copy { fill:var(--ink); font-size:12px; }
+    .meta { fill:var(--ink); font-size:11px; letter-spacing:.4px; }
+    @keyframes reveal { from { opacity:0; } to { opacity:1; } }
+    .r1{animation-delay:.05s}.r2{animation-delay:.10s}.r3{animation-delay:.15s}.r4{animation-delay:.20s}.r5{animation-delay:.25s}
+    .r6{animation-delay:.30s}.r7{animation-delay:.35s}.r8{animation-delay:.40s}
+    @media (prefers-reduced-motion:reduce) { .row { animation:none; opacity:1; } }
+    :root { --ink:#000000; --paper:#FFFFFF; }
+  </style>
+
+  <g class="mono">
+    <g class="row r1" transform="translate(0 20)">
+      <text class="title" x="48" y="24">01 / LMS PORTAL</text>
+      <text class="copy" x="48" y="49">Learning Management System (LMS) web platform</text>
+      <text class="meta" x="48" y="87">JS · HTML · CSS</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r2" transform="translate(0 130)">
+      <text class="title" x="48" y="24">02 / TECNOSTORE</text>
+      <text class="copy" x="48" y="49">Enterprise Management System</text>
+      <text class="meta" x="48" y="87">JAVA · MYSQL · XML</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r3" transform="translate(0 240)">
+      <text class="title" x="48" y="24">03 / LOGITRACK</text>
+      <text class="copy" x="48" y="49">Warehouse Management System</text>
+      <text class="meta" x="48" y="87">JAVA · CSS · JS · HTML · SPRINGBOOT · LOMBOK · JWT · SWAGGER</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r4" transform="translate(0 350)">
+      <text class="title" x="48" y="24">04 / KARIOMEDIA</text>
+      <text class="copy" x="48" y="49">Dashboard and Metrics System</text>
+      <text class="meta" x="48" y="87">HTML · CSS</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r5" transform="translate(0 460)">
+      <text class="title" x="48" y="24">05 / SORA</text>
+      <text class="copy" x="48" y="49">Smart Recruitment Platform</text>
+      <text class="meta" x="48" y="87">JS · HTML · CSS</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r6" transform="translate(0 570)">
+      <text class="title" x="48" y="24">06 / TOPPING</text>
+      <text class="copy" x="48" y="49">Pizzeria Management System</text>
+      <text class="meta" x="48" y="87">MYSQL</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r7" transform="translate(0 680)">
+      <text class="title" x="48" y="24">07 / SPENDIFY</text>
+      <text class="copy" x="48" y="49">Daily Expense Simulator</text>
+      <text class="meta" x="48" y="87">PYTHON</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r8" transform="translate(0 790)">
+      <text class="title" x="48" y="24">08 / VIRAAI</text>
+      <text class="copy" x="48" y="49">Multi-Agent Marketing System for Campuslands AI Academy</text>
+      <text class="meta" x="48" y="87">PYTHON · MD</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+  </g>
+</svg>
