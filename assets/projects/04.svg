@@ -1,0 +1,22 @@
+<svg viewBox="0 0 730 110" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="04 — FULLSERVICE AGENTS">
+  <style>
+    :root { --ink:#000000; }
+    .mono { font-family:ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,"Liberation Mono",monospace; }
+    .row { opacity:0; animation:reveal .55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:0.20s; }
+    .rule { stroke:var(--ink); stroke-width:1; }
+    .title { fill:var(--ink); font-size:17px; font-weight:700; letter-spacing:.8px; }
+    .link { fill:var(--ink); font-size:13px; font-weight:700; letter-spacing:1.5px; }
+    .off { opacity:.4; }
+    .copy { fill:var(--ink); font-size:12px; }
+    .meta { fill:var(--ink); font-size:11px; letter-spacing:.4px; }
+    @keyframes reveal { from { opacity:0; } to { opacity:1; } }
+    @media (prefers-reduced-motion:reduce) { .row { animation:none; opacity:1; } }
+  </style>
+  <g class="mono row">
+    <text class="title" x="48" y="24">04 / FULLSERVICE AGENTS</text>
+    <text class="copy" x="48" y="49">Monorepo of 6 AI agents for the Campuslands sales cycle: prospecting, LinkedIn outreach,</text>
+    <text class="copy" x="48" y="67">branded decks, scope quotes, tender analysis and contract drafting, end to end.</text>
+    <text class="meta" x="48" y="87">AI AGENTS · CLAUDE CODE · PERPLEXITY · PYTHON · MD · HTML · CSS</text>
+    <line class="rule" x1="48" y1="104" x2="730" y2="104"/>
+  </g>
+</svg>
