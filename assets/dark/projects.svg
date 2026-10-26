@@ -1,4 +1,4 @@
-<svg viewBox="0 0 1000 920" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ocho proyectos by Gustavo Navarro">
+<svg viewBox="0 0 1000 1570" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="14 projects by Gustavo Navarro">
   <style>
     :root { --ink:#000000; --paper:#FFFFFF; }
     @media (prefers-color-scheme:dark) { :root { --ink:#FFFFFF; --paper:#000000; --ghost:#FFFFFF; } }
@@ -9,57 +9,92 @@
     .copy { fill:var(--ink); font-size:12px; }
     .meta { fill:var(--ink); font-size:11px; letter-spacing:.4px; }
     @keyframes reveal { from { opacity:0; } to { opacity:1; } }
-    .r1{animation-delay:.05s}.r2{animation-delay:.10s}.r3{animation-delay:.15s}.r4{animation-delay:.20s}.r5{animation-delay:.25s}
-    .r6{animation-delay:.30s}.r7{animation-delay:.35s}.r8{animation-delay:.40s}
+    .r1{animation-delay:0.05s}.r2{animation-delay:0.10s}.r3{animation-delay:0.15s}.r4{animation-delay:0.20s}.r5{animation-delay:0.25s}.r6{animation-delay:0.30s}.r7{animation-delay:0.35s}.r8{animation-delay:0.40s}.r9{animation-delay:0.45s}.r10{animation-delay:0.50s}.r11{animation-delay:0.55s}.r12{animation-delay:0.60s}.r13{animation-delay:0.65s}.r14{animation-delay:0.70s}
     @media (prefers-reduced-motion:reduce) { .row { animation:none; opacity:1; } }
     :root { --ink:#FFFFFF; --paper:#000000; }
   </style>
 
   <g class="mono">
     <g class="row r1" transform="translate(0 20)">
-      <text class="title" x="48" y="24">01 / LMS PORTAL</text>
+      <text class="title" x="48" y="24">01 / CRM CAMPUSLANDS</text>
+      <text class="copy" x="48" y="49">Internal CRM: clients, projects, billing, receivables and forecasting</text>
+      <text class="meta" x="48" y="87">TYPESCRIPT · REACT · VITE · TAILWIND · SHADCN/UI · FIREBASE · FIRESTORE</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r2" transform="translate(0 130)">
+      <text class="title" x="48" y="24">02 / WAYLO.AI</text>
+      <text class="copy" x="48" y="49">AI patient-triage navigator: routes users to Emergency, Priority or General care</text>
+      <text class="meta" x="48" y="87">TYPESCRIPT · NEXT.JS · VERCEL AI SDK · POSTGRESQL (NEON) · TAILWIND · VITEST</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r3" transform="translate(0 240)">
+      <text class="title" x="48" y="24">03 / CONECT.IA</text>
+      <text class="copy" x="48" y="49">AI social media automation: generate, schedule and publish posts across networks</text>
+      <text class="meta" x="48" y="87">TYPESCRIPT · REACT · VITE · AUTH.JS · POSTGRESQL (NEON) · GEMINI · VERCEL</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r4" transform="translate(0 350)">
+      <text class="title" x="48" y="24">04 / FULLSERVICE AGENTS</text>
+      <text class="copy" x="48" y="49">Multi-agent sales pipeline for Campuslands S.A.S: prospecting to signed contract</text>
+      <text class="meta" x="48" y="87">AI AGENTS · CLAUDE CODE · PERPLEXITY · PYTHON · MD · HTML · CSS</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r5" transform="translate(0 460)">
+      <text class="title" x="48" y="24">05 / CASABLANCA HUB</text>
+      <text class="copy" x="48" y="49">Recruitment CRM for Carnes Casablanca: AI interview agent with WhatsApp and human handoff</text>
+      <text class="meta" x="48" y="87">TYPESCRIPT · NEXT.JS · REACT · PRISMA · POSTGRESQL · DEEPSEEK · WHATSAPP API</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r6" transform="translate(0 570)">
+      <text class="title" x="48" y="24">06 / PORTFOLIO</text>
+      <text class="copy" x="48" y="49">Personal portfolio: scroll-driven hero, ES/EN/PT, dark mode and interactive terminal</text>
+      <text class="meta" x="48" y="87">JS · HTML · CSS · VERCEL</text>
+      <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
+    </g>
+    <g class="row r7" transform="translate(0 680)">
+      <text class="title" x="48" y="24">07 / LMS PORTAL</text>
       <text class="copy" x="48" y="49">Learning Management System (LMS) web platform</text>
       <text class="meta" x="48" y="87">JS · HTML · CSS</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r2" transform="translate(0 130)">
-      <text class="title" x="48" y="24">02 / TECNOSTORE</text>
+    <g class="row r8" transform="translate(0 790)">
+      <text class="title" x="48" y="24">08 / TECNOSTORE</text>
       <text class="copy" x="48" y="49">Enterprise Management System</text>
       <text class="meta" x="48" y="87">JAVA · MYSQL · XML</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r3" transform="translate(0 240)">
-      <text class="title" x="48" y="24">03 / LOGITRACK</text>
+    <g class="row r9" transform="translate(0 900)">
+      <text class="title" x="48" y="24">09 / LOGITRACK</text>
       <text class="copy" x="48" y="49">Warehouse Management System</text>
       <text class="meta" x="48" y="87">JAVA · CSS · JS · HTML · SPRINGBOOT · LOMBOK · JWT · SWAGGER</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r4" transform="translate(0 350)">
-      <text class="title" x="48" y="24">04 / KARIOMEDIA</text>
+    <g class="row r10" transform="translate(0 1010)">
+      <text class="title" x="48" y="24">10 / KARIOMEDIA</text>
       <text class="copy" x="48" y="49">Dashboard and Metrics System</text>
       <text class="meta" x="48" y="87">HTML · CSS</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r5" transform="translate(0 460)">
-      <text class="title" x="48" y="24">05 / SORA</text>
+    <g class="row r11" transform="translate(0 1120)">
+      <text class="title" x="48" y="24">11 / SORA</text>
       <text class="copy" x="48" y="49">Smart Recruitment Platform</text>
       <text class="meta" x="48" y="87">JS · HTML · CSS</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r6" transform="translate(0 570)">
-      <text class="title" x="48" y="24">06 / TOPPING</text>
+    <g class="row r12" transform="translate(0 1230)">
+      <text class="title" x="48" y="24">12 / TOPPING</text>
       <text class="copy" x="48" y="49">Pizzeria Management System</text>
       <text class="meta" x="48" y="87">MYSQL</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r7" transform="translate(0 680)">
-      <text class="title" x="48" y="24">07 / SPENDIFY</text>
+    <g class="row r13" transform="translate(0 1340)">
+      <text class="title" x="48" y="24">13 / SPENDIFY</text>
       <text class="copy" x="48" y="49">Daily Expense Simulator</text>
       <text class="meta" x="48" y="87">PYTHON</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
     </g>
-    <g class="row r8" transform="translate(0 790)">
-      <text class="title" x="48" y="24">08 / VIRAAI</text>
+    <g class="row r14" transform="translate(0 1450)">
+      <text class="title" x="48" y="24">14 / VIRAAI</text>
       <text class="copy" x="48" y="49">Multi-Agent Marketing System for Campuslands AI Academy</text>
       <text class="meta" x="48" y="87">PYTHON · MD</text>
       <line class="rule" x1="48" y1="104" x2="952" y2="104"/>
