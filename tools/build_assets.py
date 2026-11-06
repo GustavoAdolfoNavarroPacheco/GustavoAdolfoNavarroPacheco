@@ -9,11 +9,18 @@ Escribe:
   README.md                                  -> enlaza cada imagen con <picture>
 
 Estilo: sobrio, tipo blog de Anthropic. Fondo marfil #faf9f5, tinta #141413, líneas finas de 1 px en gris cálido
-#a3a095, un único acento naranja #d97757 (usado solo en marcadores y en el dato destacado de cada gráfico),
-títulos en serif, interfaz en sans, esquinas rectas, sin sombras ni degradados ni animaciones.
-GitHub no carga fuentes externas dentro de un <img>, así que se usan pilas del sistema.
+#a3a095, un único acento naranja #d97757, títulos en serif, interfaz en sans, esquinas rectas, sin sombras ni
+degradados. GitHub no carga fuentes externas dentro de un <img>, así que se usan pilas del sistema.
 
 Escala tipográfica única (px del viewBox): 64 hero · 32 títulos y cifras · 20 destacados · 16 cuerpo · 14 interfaz.
+
+Distribución: todos los paneles miden 1000 de ancho (margen 48) y se muestran al 100 %, de modo que forman una sola
+columna continua. Las filas de proyecto y la tira de enlaces se reparten el 100 % sin huecos (anchos que suman 99.99 %).
+
+Movimiento (solo CSS dentro del SVG, funciona en un <img> de GitHub): entradas escalonadas al cargar y, para que se note
+también más abajo en la página, pequeños movimientos continuos (destello naranja sobre las líneas, puntos que pulsan,
+guiones que avanzan). Todo se apaga con prefers-reduced-motion y, si el navegador no anima, el contenido queda visible.
+
 Para cambiar contenido o enlaces edita los datos de este archivo y vuelve a ejecutarlo: no edites los SVG a mano.
 Solo usa la biblioteca estándar.
 """
@@ -37,8 +44,13 @@ SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
 MX = 48           # margen lateral
 RX = 952          # borde derecho del contenido (1000 - 48)
 
+# Anchos (en %) que suman 99.99: la fila de proyecto y sus dos celdas, y las cuatro celdas de enlaces.
+W_ROW, W_CELL, W_LINK = "73.79%", "13.1%", "24.99%"
+VB_ROW, VB_CELL, VB_LINK = 738, 131, 250   # viewBox con la misma proporción (1000 en total)
+
 
 def css(c):
+    """Estilos del SVG. Las animaciones usan fill-mode 'backwards': si no se reproducen, el contenido sigue visible."""
     return (
         f".serif{{font-family:{SERIF}}}.sans{{font-family:{SANS}}}"
         ".t64{font-size:64px;letter-spacing:-1px}.t32{font-size:32px;letter-spacing:-.3px}"
@@ -46,6 +58,39 @@ def css(c):
         f".ink{{fill:{c['ink']}}}.tx{{fill:{c['text']}}}.mu{{fill:{c['muted']}}}.so{{fill:{c['soft']}}}"
         f".ac{{fill:{c['accent']}}}.at{{fill:{c['accent_t']}}}"
         f".ul{{text-decoration:underline;text-underline-offset:3px;text-decoration-color:{c['rule']}}}"
+        # entradas
+        ".rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) backwards}"
+        ".pop{animation:pop .7s cubic-bezier(.2,.7,.2,1) backwards}"
+        ".fade{animation:fade .9s ease backwards}"
+        ".draw{stroke-dasharray:1;animation:draw 1.3s cubic-bezier(.6,0,.2,1) backwards}"
+        ".grow{transform-box:fill-box;transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.7,.2,1) backwards}"
+        "@keyframes rise{from{opacity:0;transform:translateY(10px)}}"
+        "@keyframes pop{from{opacity:0;transform:translateY(12px)}}"
+        "@keyframes fade{from{opacity:0}}"
+        "@keyframes draw{from{stroke-dashoffset:1}}"
+        "@keyframes grow{from{transform:scaleX(0)}}"
+        # movimiento continuo
+        ".pulse{animation:pulse 2.8s ease-in-out infinite}"
+        ".ping{transform-box:fill-box;transform-origin:center;animation:ping 2.8s ease-out infinite}"
+        ".glint{stroke-dasharray:60 1000;animation:glint 8s ease-in-out infinite}"
+        ".march{stroke-dasharray:3 7;animation:march 1.8s linear infinite}"
+        ".travel{animation:travel 7s linear infinite}"
+        ".nudge{animation:nudge 3.2s ease-in-out infinite}"
+        ".scan{animation:scan 9s steps(1,end) infinite}"
+        ".slide{animation:slide 9s linear infinite}"
+        ".trace{animation:trace 10s linear infinite}"
+        "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}"
+        "@keyframes ping{0%{transform:scale(.5);opacity:.8}80%,100%{transform:scale(2.8);opacity:0}}"
+        "@keyframes glint{0%{stroke-dashoffset:60}65%,100%{stroke-dashoffset:-1000}}"
+        "@keyframes march{to{stroke-dashoffset:-10}}"
+        "@keyframes travel{0%{transform:translateY(0);opacity:0}8%{opacity:1}92%{opacity:1}100%{transform:translateY(var(--d));opacity:0}}"
+        "@keyframes nudge{0%,55%,100%{transform:translate(0,0)}70%{transform:translate(2px,-2px)}85%{transform:translate(0,0)}}"
+        "@keyframes scan{0%{opacity:1}11.1%,100%{opacity:0}}"
+        "@keyframes slide{0%{transform:translateX(0);opacity:0}6%{opacity:1}72%{opacity:1}80%,100%{transform:translateX(var(--d));opacity:0}}"
+        "@keyframes trace{0%{offset-distance:0%;opacity:0}5%{opacity:1}68%{offset-distance:100%;opacity:1}75%,100%{offset-distance:100%;opacity:0}}"
+        "@media (prefers-reduced-motion:reduce){"
+        ".rise,.pop,.fade,.draw,.grow,.pulse,.ping,.glint,.march,.travel,.nudge,.scan,.slide,.trace{animation:none}"
+        ".glint,.ping,.travel,.scan,.slide,.trace{opacity:0}}"
     )
 
 
@@ -60,26 +105,60 @@ def svg(w, h, body, label, c, size=False):
     )
 
 
-def T(x, y, text, cls, anchor=None):
+def st(delay=0.0, extra=""):
+    """Atributo style con retardo de animación (y variables extra)."""
+    parts = []
+    if delay:
+        parts.append(f"animation-delay:{delay}s")
+    if extra:
+        parts.append(extra)
+    return f' style="{";".join(parts)}"' if parts else ""
+
+
+def T(x, y, text, cls, anchor=None, anim=None, delay=0.0):
     a = f' text-anchor="{anchor}"' if anchor else ""
-    return f'<text x="{x}" y="{y}" class="{cls}"{a}>{escape(text, quote=False)}</text>'
+    k = f"{cls} {anim}" if anim else cls
+    return f'<text x="{x}" y="{y}" class="{k}"{a}{st(delay if anim else 0)}>{escape(text, quote=False)}</text>'
 
 
-def hline(c, x1, x2, y, op=0.7):
-    return f'<line x1="{x1}" y1="{y + .5}" x2="{x2}" y2="{y + .5}" stroke="{c["rule"]}" stroke-width="1" stroke-opacity="{op}"/>'
+def G(inner, anim, delay=0.0):
+    return f'<g class="{anim}"{st(delay)}>{inner}</g>'
 
 
-def vline(c, x, y1, y2, op=0.7):
-    return f'<line x1="{x + .5}" y1="{y1}" x2="{x + .5}" y2="{y2}" stroke="{c["rule"]}" stroke-width="1" stroke-opacity="{op}"/>'
+def hline(c, x1, x2, y, op=0.7, draw=None):
+    cls = ' class="draw" pathLength="1"' if draw is not None else ""
+    return (f'<line{cls} x1="{x1}" y1="{y + .5}" x2="{x2}" y2="{y + .5}" stroke="{c["rule"]}" stroke-width="1" '
+            f'stroke-opacity="{op}"{st(draw or 0)}/>')
 
 
-def box(c, x, y, w, h, op=0.8):
-    return (f'<rect x="{x + .5}" y="{y + .5}" width="{w - 1}" height="{h - 1}" fill="none" '
+def vline(c, x, y1, y2, op=0.7, draw=None):
+    cls = ' class="draw" pathLength="1"' if draw is not None else ""
+    return (f'<line{cls} x1="{x + .5}" y1="{y1}" x2="{x + .5}" y2="{y2}" stroke="{c["rule"]}" stroke-width="1" '
+            f'stroke-opacity="{op}"{st(draw or 0)}/>')
+
+
+def glint(c, x1, x2, y, delay=0.0, horizontal=True):
+    """Destello naranja que recorre una línea fina."""
+    if horizontal:
+        return (f'<line class="glint" pathLength="1000" x1="{x1}" y1="{y + .5}" x2="{x2}" y2="{y + .5}" '
+                f'stroke="{c["accent"]}" stroke-width="1"{st(delay)}/>')
+    return (f'<line class="glint" pathLength="1000" x1="{y + .5}" y1="{x1}" x2="{y + .5}" y2="{x2}" '
+            f'stroke="{c["accent"]}" stroke-width="1"{st(delay)}/>')
+
+
+def box(c, x, y, w, h, op=0.8, fill="none"):
+    return (f'<rect x="{x + .5}" y="{y + .5}" width="{w - 1}" height="{h - 1}" fill="{fill}" '
             f'stroke="{c["rule"]}" stroke-width="1" stroke-opacity="{op}"/>')
 
 
-def square(c, x, y, s=8):
-    return f'<rect x="{x}" y="{y}" width="{s}" height="{s}" fill="{c["accent"]}"/>'
+def square(c, x, y, s=8, pulse=True, delay=0.0):
+    k = ' class="pulse"' if pulse else ""
+    return f'<rect{k} x="{x}" y="{y}" width="{s}" height="{s}" fill="{c["accent"]}"{st(delay if pulse else 0)}/>'
+
+
+def dot(c, cx, cy, r=4, delay=0.0, ring=True):
+    s = (f'<circle class="ping" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{c["accent"]}"{st(delay)}/>' if ring else "")
+    return s + f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{c["accent"]}"/>'
 
 
 # ───────────────────────────── datos ─────────────────────────────
@@ -229,7 +308,7 @@ SECTIONS = [  # (archivo, título)
     ("s04", "Actividad"), ("s05", "Trayectoria"), ("s06", "Stack técnico"),
 ]
 
-LINKS = [  # (archivo, etiqueta, ancho, url, alt)
+LINKS = [  # (archivo, etiqueta, url, alt)
     ("link-portfolio", "Portafolio", "https://gustavoadolfonavarropacheco.vercel.app/", "Portafolio"),
     ("link-resume", "Currículum", "https://gustavoadolfonavarropacheco.vercel.app/Gustavo_Navarro_CV.pdf", "Currículum (PDF)"),
     ("link-linkedin", "LinkedIn", "https://www.linkedin.com/in/gustavo-adolfo-navarro-pacheco-876b06356/", "LinkedIn"),
@@ -239,189 +318,231 @@ LINKS = [  # (archivo, etiqueta, ancho, url, alt)
 
 # ───────────────────────────── imágenes ─────────────────────────────
 def header(c):
-    b = [square(c, MX, 56, 10), T(MX + 22, 66, "Portafolio", "sans t14 mu"),
-         T(RX, 66, "Campuslands S.A.S", "sans t14 mu", "end"),
-         T(MX - 3, 172, "Gustavo Navarro", "serif t64 ink"),
-         T(MX, 216, "Full Stack Developer — Bucaramanga, Santander, Colombia.", "serif t20 mu"),
-         hline(c, MX, RX, 262),
-         T(MX, 306, "Enfoque", "sans t14 mu"), T(MX + 112, 306, "MySQL · Python · JS · React", "sans t16 ink"),
-         T(MX, 340, "Estado", "sans t14 mu"), square(c, MX + 112, 331, 8),
-         T(MX + 130, 340, "Open to internships · freelance · collaboration", "sans t16 ink")]
-    return svg(1000, 372, "".join(b), "Gustavo Navarro — Full Stack Developer en Bucaramanga, Colombia", c)
+    b = [G(square(c, MX, 56, 10, pulse=False), "fade", .1), T(MX + 22, 66, "Portafolio", "sans t14 mu", anim="fade", delay=.1),
+         T(RX, 66, "Campuslands S.A.S", "sans t14 mu", "end", anim="fade", delay=.2),
+         T(MX - 3, 172, "Gustavo Navarro", "serif t64 ink", anim="rise", delay=.25),
+         T(MX, 216, "Full Stack Developer — Bucaramanga, Santander, Colombia.", "serif t20 mu", anim="rise", delay=.5),
+         hline(c, MX, RX, 256, draw=.7), glint(c, MX, RX, 256, 1.5)]
+    return svg(1000, 284, "".join(b), "Gustavo Navarro — Full Stack Developer en Bucaramanga, Colombia", c)
 
 
-def link_button(label):
+def link_button(label, idx):
     def f(c):
-        b = [box(c, 0, 0, 168, 44, 0.9), T(84, 27, f"{label} ↗", "sans t14 b ink", "middle")]
-        return svg(168, 44, "".join(b), label, c, size=True)
+        b = [hline(c, 0, VB_LINK, 0, 0.9), hline(c, 0, VB_LINK, 55, 0.9), vline(c, VB_LINK - 1, 0, 56, 0.9),
+             glint(c, 0, VB_LINK, 55, 1.0 + idx * 1.6)]
+        if idx == 0:
+            b.append(vline(c, 0, 0, 56, 0.9))
+        b.append(f'<text x="{VB_LINK / 2}" y="33" class="sans t14 b ink" text-anchor="middle">{escape(label)} '
+                 f'<tspan class="at">↗</tspan></text>')
+        return svg(VB_LINK, 56, "".join(b), label, c)
     return f
 
 
-def section(title):
+def section(title, idx):
     def f(c):
-        b = [T(MX, 54, title, "serif t32 ink"), hline(c, MX, RX, 70)]
-        return svg(1000, 88, "".join(b), title, c)
+        b = [T(MX, 52, title, "serif t32 ink", anim="rise"), hline(c, MX, RX, 68, draw=.2),
+             glint(c, MX, RX, 68, 1.0 + idx * 1.3)]
+        return svg(1000, 84, "".join(b), title, c)
     return f
 
 
 def whoami(c):
-    b = [T(MX, 48, "Graduated from Campuslands S.A.S", "serif t20 mu"),
-         T(MX - 1, 96, "Full Stack Developer", "serif t32 ink"),
-         T(MX, 128, "Java · React · SpringBoot · Node.js · HTML & CSS", "sans t16 tx"),
-         T(MX, 170, "Drawn to projects where design meets data.", "serif t20 mu"),
-         T(MX, 198, "Clean architecture and user experience in equal measure.", "serif t20 mu"),
-         hline(c, MX, RX, 230),
-         T(MX, 274, "Enfoque", "sans t14 mu"),
-         T(MX + 112, 274, "Mobile · Full-Stack Systems · Terminal UI / CLI · AI-integrated architectures", "sans t16 ink"),
-         T(MX, 312, "Estado", "sans t14 mu"), square(c, MX + 112, 303, 8),
-         T(MX + 130, 312, "Open to internships · freelance · collaboration", "sans t16 ink")]
-    return svg(1000, 344, "".join(b), "Sobre Gustavo: Full Stack Developer graduado de Campuslands, abierto a pasantías, freelance y colaboración", c)
+    d = 600   # columna derecha
+    b = [T(MX, 52, "Graduated from Campuslands S.A.S", "serif t20 mu", anim="rise", delay=.05),
+         T(MX - 1, 100, "Full Stack Developer", "serif t32 ink", anim="rise", delay=.15),
+         T(MX, 134, "Java · React · SpringBoot · Node.js · HTML & CSS", "sans t16 tx", anim="rise", delay=.25),
+         T(MX, 184, "Drawn to projects where design meets data.", "serif t20 mu", anim="rise", delay=.35),
+         T(MX, 212, "Clean architecture and user experience in equal measure.", "serif t20 mu", anim="rise", delay=.45),
+         vline(c, d - 24, 32, 232, 0.6, draw=.3),
+         T(d, 52, "Enfoque", "sans t14 mu", anim="rise", delay=.3),
+         T(d, 82, "Mobile · Full-Stack Systems", "sans t16 ink", anim="rise", delay=.35),
+         T(d, 106, "Terminal UI / CLI", "sans t16 ink", anim="rise", delay=.4),
+         T(d, 130, "AI-integrated architectures", "sans t16 ink", anim="rise", delay=.45),
+         T(d, 172, "Estado", "sans t14 mu", anim="rise", delay=.5),
+         G(square(c, d, 190, 8), "rise", .55),
+         T(d + 18, 199, "Open to internships ·", "sans t16 ink", anim="rise", delay=.55),
+         T(d + 18, 223, "freelance · collaboration", "sans t16 ink", anim="rise", delay=.6)]
+    return svg(1000, 260, "".join(b), "Sobre Gustavo: Full Stack Developer graduado de Campuslands, abierto a pasantías, freelance y colaboración", c)
 
 
 def ecosystem(c):
-    cw, ch, gap = 264, 62, 14
+    cw, ch, pitch = 264, 62, 76
     xs = [48, 368, 688]
-    centers = [x + cw / 2 for x in xs]
-    b = [box(c, 400, 24, 200, 56, 0.9),
-         T(500, 50, "Gustavo Navarro", "serif t20 ink", "middle"),
-         T(500, 69, "One-person build pipeline", "sans t14 mu", "middle"),
-         vline(c, 500, 80, 104), hline(c, int(centers[0]), int(centers[2]), 104)]
-    for cx in centers:
-        b.append(vline(c, int(cx), 104, 132))
-    for x, cx, (head, nodes) in zip(xs, centers, ECOSYSTEM):
-        b.append(T(int(cx), 156, head, "sans t14 b ink", "middle"))
+    centers = [int(x + cw / 2) for x in xs]
+    top, nmax = 184, 5
+    bottom = top + (nmax - 1) * pitch + ch          # 550
+    b = [G(box(c, 400, 24, 200, 56, 0.9, c["bg"]) + T(500, 50, "Gustavo Navarro", "serif t20 ink", "middle")
+           + T(500, 69, "One-person build pipeline", "sans t14 mu", "middle"), "pop", .05),
+         vline(c, 500, 80, 104, draw=.3), hline(c, centers[0], centers[2], 104, draw=.4)]
+    # columnas: guiones que avanzan y un punto que viaja, por detrás de las tarjetas
+    for k, cx in enumerate(centers):
+        b.append(vline(c, cx, 104, 132, draw=.5))
+        b.append(f'<line class="march" x1="{cx + .5}" y1="132" x2="{cx + .5}" y2="{bottom}" stroke="{c["rule"]}" stroke-opacity=".7"/>')
+        b.append(f'<circle class="travel" cx="{cx + .5}" cy="132" r="3" fill="{c["accent"]}" style="--d:{bottom - 132}px;animation-delay:{k * 2.3}s"/>')
+    n = 0
+    for k, (x, cx, (head, nodes)) in enumerate(zip(xs, centers, ECOSYSTEM)):
+        b.append(T(cx, 156, head, "sans t14 b ink", "middle", anim="fade", delay=.5 + k * .1))
+        off = (nmax - len(nodes)) * pitch // 2          # centra verticalmente las columnas con menos tarjetas
         for i, (name, sub) in enumerate(nodes):
-            y = 176 + i * (ch + gap)
-            b += [box(c, x, y, cw, ch), T(x + 20, y + 27, name, "sans t16 b ink"), T(x + 20, y + 48, sub, "sans t14 mu")]
-    b += [hline(c, MX, RX, 566), T(MX, 592, "Everything from one pipeline.", "serif t14 i mu")]
-    return svg(1000, 612, "".join(b), "Mapa del ecosistema: sistemas de negocio, IA y automatización, y web y datos, todo desde un mismo flujo de trabajo", c)
+            y = top + off + i * pitch
+            n += 1
+            b.append(G(box(c, x, y, cw, ch, 0.8, c["bg"]) + T(x + 20, y + 27, name, "sans t16 b ink")
+                       + T(x + 20, y + 48, sub, "sans t14 mu"), "pop", .6 + n * .06))
+    b += [hline(c, MX, RX, 576, draw=1.0), T(MX, 602, "Everything from one pipeline.", "serif t14 i mu", anim="fade", delay=1.2)]
+    return svg(1000, 624, "".join(b), "Mapa del ecosistema: sistemas de negocio, IA y automatización, y web y datos, todo desde un mismo flujo de trabajo", c)
 
 
-def project_row(p):
+def project_row(p, idx):
     def f(c):
-        b = [T(MX, 34, p["name"], "serif t20 ink"),
-             T(MX, 60, p["desc"][0], "sans t14 tx"), T(MX, 80, p["desc"][1], "sans t14 tx"),
-             T(MX, 104, " · ".join(p["tech"]), "sans t14 mu"),
-             hline(c, MX, 730, 118, 0.55)]
-        return svg(730, 124, "".join(b), p["name"], c)
+        d = idx * .07
+        b = [T(MX, 34, p["name"], "serif t20 ink", anim="rise", delay=d),
+             T(MX, 60, p["desc"][0], "sans t14 tx", anim="rise", delay=d + .08),
+             T(MX, 80, p["desc"][1], "sans t14 tx", anim="rise", delay=d + .12),
+             T(MX, 104, " · ".join(p["tech"]), "sans t14 mu", anim="rise", delay=d + .16),
+             hline(c, MX, VB_ROW, 118, 0.55, draw=d + .2), glint(c, MX, VB_ROW, 118, idx * .5 + .5)]
+        return svg(VB_ROW, 124, "".join(b), p["name"], c)
     return f
 
 
 def cell(kind):
-    texts = {"live": ("Sitio ↗", "sans t14 b ink ul"), "live-none": ("Sin sitio", "sans t14 so"),
-             "repo": ("Código ↗", "sans t14 b ink ul"), "repo-private": ("Privado", "sans t14 so")}
+    """Celdas de enlace: mismo ancho de texto (x=34) y misma columna de icono (x=20) en las cuatro variantes."""
     label = {"live": "Sitio en vivo", "live-none": "Sin sitio", "repo": "Repositorio", "repo-private": "Repositorio privado"}[kind]
+    txt = {"live": "Sitio ↗", "live-none": "Sin sitio", "repo": "Código ↗", "repo-private": "Privado"}[kind]
 
     def f(c):
-        x2 = 82 if kind.startswith("repo") else 130
-        b = [T(16, 34, texts[kind][0], texts[kind][1]), hline(c, 0, x2, 118, 0.55)]
-        return svg(130, 124, "".join(b), label, c)
+        active = kind in ("live", "repo")
+        if kind == "live":
+            icon = dot(c, 20, 29, 3.5)
+        elif kind == "repo":
+            icon = f'<circle cx="20" cy="29" r="3.5" fill="{c["ink"]}"/>'
+        else:
+            icon = f'<circle cx="20" cy="29" r="3" fill="none" stroke="{c["soft"]}" stroke-width="1"/>'
+        x2 = VB_CELL - 48 if kind.startswith("repo") else VB_CELL
+        b = [icon, T(34, 34, txt, "sans t14 b ink ul" if active else "sans t14 so"), hline(c, 0, x2, 118, 0.55)]
+        return svg(VB_CELL, 124, "".join(b), label, c)
     return f
 
 
 def telemetry(c):
-    b = [vline(c, 360, 20, 300, 0.45), vline(c, 676, 20, 300, 0.45)]
-    # lenguajes por bytes
-    b.append(T(MX, 38, "Lenguajes · por bytes", "sans t14 mu"))
+    b = [vline(c, 360, 20, 300, 0.45, draw=.2), vline(c, 676, 20, 300, 0.45, draw=.3)]
+    b.append(T(MX, 38, "Lenguajes · por bytes", "sans t14 mu", anim="fade"))
     for i, (lang, pct, w) in enumerate(LANGS_BYTES):
         y = 78 + i * 40
         fill = c["accent"] if i == 0 else c["soft"]
-        b += [T(MX, y, lang, "sans t14 ink"),
-              f'<rect x="{MX}" y="{y + 8}" width="{w}" height="8" fill="{fill}"/>',
-              T(MX + w + 10, y + 16, f"{pct}%", "sans t14 mu")]
-    # ritmo de entrega
-    b.append(T(392, 38, "Ritmo de entrega · 2025 → 2026", "sans t14 mu"))
+        b += [T(MX, y, lang, "sans t14 ink", anim="rise", delay=i * .08),
+              f'<rect class="grow" x="{MX}" y="{y + 8}" width="{w}" height="8" fill="{fill}"{st(.2 + i * .1)}/>',
+              T(MX + w + 10, y + 16, f"{pct}%", "sans t14 mu", anim="fade", delay=.5 + i * .1)]
+    b.append(T(392, 38, "Ritmo de entrega · 2025 → 2026", "sans t14 mu", anim="fade"))
     b += [hline(c, 392, 656, 212),
-          f'<polyline points="392,200 440,192 488,170 536,148 584,108 622,72 656,52" fill="none" stroke="{c["ink"]}" stroke-width="1.5" stroke-linejoin="round"/>']
-    for px, py in [(440, 192), (488, 170), (536, 148), (584, 108)]:
-        b.append(f'<circle cx="{px}" cy="{py}" r="2.5" fill="{c["ink"]}"/>')
-    b.append(f'<circle cx="622" cy="72" r="4.5" fill="{c["accent"]}"/>')
+          f'<polyline class="draw" pathLength="1" points="392,200 440,192 488,170 536,148 584,108 622,72 656,52" fill="none" '
+          f'stroke="{c["ink"]}" stroke-width="1.5" stroke-linejoin="round"{st(.4)}/>']
+    for k, (px, py) in enumerate([(440, 192), (488, 170), (536, 148), (584, 108)]):
+        b.append(f'<circle class="fade" cx="{px}" cy="{py}" r="2.5" fill="{c["ink"]}"{st(.9 + k * .15)}/>')
+    b.append(G(dot(c, 622, 72, 4.5), "fade", 1.5))
     b += [T(392, 236, "Apr '25", "sans t14 mu"), T(500, 236, "Feb '26", "sans t14 mu"), T(612, 236, "Oct '26", "sans t14 mu"),
-          T(392, 272, "Tendencia: acelerando", "sans t14 ink")]
-    # contadores
+          T(392, 272, "Tendencia: acelerando", "sans t14 ink", anim="fade", delay=1.2)]
     counters = [("27", "Repositorios", False), ("14", "Proyectos documentados", False),
                 ("3", "Web · API · AI agents", False), ("∞", "Pestañas de terminal abiertas", True)]
-    b.append(T(708, 38, "Perfil en cifras", "sans t14 mu"))
+    b.append(T(708, 38, "Perfil en cifras", "sans t14 mu", anim="fade"))
     for i, (n, label, hl) in enumerate(counters):
         y = 84 + i * 62
-        b += [T(708, y, n, "serif t32 " + ("at" if hl else "ink")), T(708, y + 21, label, "sans t14 mu")]
+        b += [T(708, y, n, "serif t32 " + ("at pulse" if hl else "ink"), anim=None if hl else "rise", delay=.2 + i * .12)
+              if not hl else f'<text x="708" y="{y}" class="serif t32 at pulse">{n}</text>',
+              T(708, y + 21, label, "sans t14 mu", anim="fade", delay=.3 + i * .12)]
     return svg(1000, 312, "".join(b), "Lenguajes por bytes, ritmo de entrega 2025-2026 y cifras del perfil: 27 repositorios, 14 proyectos y 3 plataformas", c)
 
 
 def github_stats(c):
-    b = [vline(c, 500, 24, 296, 0.45),
-         T(MX, 44, "Estadísticas de GitHub", "serif t20 ink"), T(532, 44, "Lenguajes por repositorio", "serif t20 ink")]
+    b = [vline(c, 500, 24, 296, 0.45, draw=.2),
+         T(MX, 44, "Estadísticas de GitHub", "serif t20 ink", anim="rise"),
+         T(532, 44, "Lenguajes por repositorio", "serif t20 ink", anim="rise", delay=.1)]
     for i, (label, val) in enumerate(GH_STATS):
         y = 96 + i * 46
-        b += [T(MX, y, label, "sans t14 tx"), T(452, y + 1, val, "serif t20 ink", "end"), hline(c, MX, 452, y + 14, 0.45)]
+        b += [T(MX, y, label, "sans t14 tx", anim="rise", delay=.1 + i * .08),
+              T(452, y + 1, val, "serif t20 ink", "end", anim="rise", delay=.15 + i * .08),
+              hline(c, MX, 452, y + 14, 0.45, draw=.2 + i * .08)]
     for i, (lang, w) in enumerate(GH_LANGS):
         y = 96 + i * 46
-        b += [T(532, y, lang, "sans t14 tx"),
+        fw = round(312 * w / 270, 1)
+        b += [T(532, y, lang, "sans t14 tx", anim="rise", delay=.1 + i * .08),
               f'<rect x="640" y="{y - 9}" width="312" height="8" fill="{c["track"]}"/>',
-              f'<rect x="640" y="{y - 9}" width="{round(312 * w / 270, 1)}" height="8" fill="{c["ink"]}"/>',
-              hline(c, 532, RX, y + 14, 0.45)]
+              f'<rect class="grow" x="640" y="{y - 9}" width="{fw}" height="8" fill="{c["ink"]}"{st(.3 + i * .12)}/>',
+              f'<rect class="pulse" x="{640 + fw - 3}" y="{y - 9}" width="3" height="8" fill="{c["accent"]}"{st(i * .45)}/>',
+              hline(c, 532, RX, y + 14, 0.45, draw=.2 + i * .08)]
     return svg(1000, 312, "".join(b), "Estadísticas de GitHub y lenguajes por repositorio", c)
 
 
 def activity(c):
     area = f"{ACTIVITY_PTS} 948.0,236.0 52.0,236.0"
-    b = [T(MX, 44, "Actividad de contribuciones", "serif t20 ink"),
-         T(RX, 44, "772 contribuciones · últimos 12 meses", "sans t14 mu", "end")]
-    for gy in (194.7, 153.3, 112.0):
-        b.append(f'<line x1="{MX}" y1="{gy}" x2="{RX}" y2="{gy}" stroke="{c["rule"]}" stroke-opacity=".45" stroke-dasharray="2 4"/>')
-    b += [f'<polygon points="{area}" fill="{c["ink"]}" fill-opacity=".06"/>',
+    path = "M" + ACTIVITY_PTS.replace(" ", " L")
+    b = [T(MX, 44, "Actividad de contribuciones", "serif t20 ink", anim="rise"),
+         T(RX, 44, "772 contribuciones · últimos 12 meses", "sans t14 mu", "end", anim="fade", delay=.2)]
+    for k, gy in enumerate((194.7, 153.3, 112.0)):
+        b.append(f'<line class="fade" x1="{MX}" y1="{gy}" x2="{RX}" y2="{gy}" stroke="{c["rule"]}" stroke-opacity=".45" '
+                 f'stroke-dasharray="2 4"{st(.2 + k * .1)}/>')
+    b += [f'<polygon class="fade" points="{area}" fill="{c["ink"]}" fill-opacity=".06"{st(1.2)}/>',
           hline(c, MX, RX, 236),
-          f'<polyline points="{ACTIVITY_PTS}" fill="none" stroke="{c["ink"]}" stroke-width="1.5" stroke-linejoin="round"/>',
-          f'<circle cx="879.1" cy="112" r="4" fill="{c["accent"]}"/>',
-          T(867, 117, "Pico: 125 por semana", "sans t14 at", "end"),
-          f'<circle cx="948" cy="229.1" r="3" fill="{c["ink"]}"/>']
+          f'<polyline class="draw" pathLength="1" points="{ACTIVITY_PTS}" fill="none" stroke="{c["ink"]}" stroke-width="1.5" '
+          f'stroke-linejoin="round" style="animation-duration:2.4s;animation-delay:.3s"/>',
+          G(dot(c, 879.1, 112, 4), "fade", 1.6),
+          T(867, 117, "Pico: 125 por semana", "sans t14 at", "end", anim="fade", delay=1.7),
+          f'<circle cx="948" cy="229.1" r="3" fill="{c["ink"]}"/>',
+          # punto que recorre la curva
+          f'<circle class="trace" cx="0" cy="0" r="3.5" fill="{c["accent"]}" style="offset-path:path(\'{path}\');animation-delay:2.5s"/>']
     for x, m in ACTIVITY_MONTHS:
-        b.append(T(x, 266, m, "sans t14 mu", "middle" if 52 < x < 940 else ("start" if x < 100 else "end")))
+        b.append(T(x, 266, m, "sans t14 mu", "middle" if 52 < x < 940 else ("start" if x < 100 else "end"), anim="fade", delay=.3))
     return svg(1000, 288, "".join(b), "Contribuciones en GitHub: 772 en los últimos 12 meses, actividad semanal", c)
 
 
 def timeline(c):
     ax, y0 = [90 + i * 140 for i in range(len(TIMELINE))], 130
-    b = [hline(c, MX, RX, y0)]
+    b = [hline(c, MX, RX, y0, draw=.2),
+         f'<circle class="slide" cx="{MX}" cy="{y0 + .5}" r="3" fill="{c["accent"]}" style="--d:{RX - MX}px;animation-delay:2s"/>']
     for i, (x, (date, label)) in enumerate(zip(ax, TIMELINE)):
         cur = i == CURRENT
         up = i % 2 == 0
+        d = .35 + i * .15
+        dc = "sans t14 " + ("at" if cur else "mu")
         if up:
-            b += [vline(c, x, 98, y0 - 6, 0.9), T(x, 62, date, "sans t14 " + ("at" if cur else "mu"), "middle"),
-                  T(x, 86, label, "sans t16 ink", "middle")]
+            b += [vline(c, x, 98, y0 - 6, 0.9, draw=d), T(x, 62, date, dc, "middle", anim="rise", delay=d),
+                  T(x, 86, label, "sans t16 ink", "middle", anim="rise", delay=d + .05)]
         else:
-            b += [vline(c, x, y0 + 6, y0 + 34, 0.9), T(x, 188, date, "sans t14 " + ("at" if cur else "mu"), "middle"),
-                  T(x, 212, label, "sans t16 ink", "middle")]
+            b += [vline(c, x, y0 + 6, y0 + 34, 0.9, draw=d), T(x, 188, date, dc, "middle", anim="rise", delay=d),
+                  T(x, 212, label, "sans t16 ink", "middle", anim="rise", delay=d + .05)]
         if cur:
-            b += [f'<circle cx="{x}" cy="{y0 + .5}" r="11" fill="none" stroke="{c["accent"]}" stroke-opacity=".4"/>',
-                  f'<circle cx="{x}" cy="{y0 + .5}" r="6" fill="{c["accent"]}"/>']
+            b.append(G(dot(c, x, y0 + .5, 6), "pop", d))
         else:
-            b.append(f'<circle cx="{x}" cy="{y0 + .5}" r="5" fill="{c["bg"]}" stroke="{c["ink"]}" stroke-width="1.5"/>')
+            b.append(f'<circle class="pop" cx="{x}" cy="{y0 + .5}" r="5" fill="{c["bg"]}" stroke="{c["ink"]}" stroke-width="1.5"{st(d)}/>')
     return svg(1000, 240, "".join(b), "Trayectoria: " + "; ".join(f"{d} {t}" for d, t in TIMELINE), c)
 
 
 def experience(c):
-    b = []
+    cols = [MX, 548]
+    b = [vline(c, 500, 8, 120, 0.6, draw=.2)]
     for i, (dur, company, role) in enumerate(EXPERIENCE):
-        y = 44 + i * 88
-        b += [T(MX, y, dur, "sans t14 mu"), T(200, y, company, "serif t20 ink"), T(200, y + 25, role, "sans t14 tx"),
-              hline(c, MX, RX, y + 44, 0.55)]
-    return svg(1000, 8 + 88 * len(EXPERIENCE), "".join(b), "Experiencia: " + "; ".join(f"{co}, {r} ({d})" for d, co, r in EXPERIENCE), c)
+        x, d = cols[i], .15 + i * .15
+        b += [T(x, 40, dur, "sans t14 mu", anim="rise", delay=d), T(x, 74, company, "serif t32 ink", anim="rise", delay=d + .05),
+              T(x, 100, role, "sans t14 tx", anim="rise", delay=d + .1)]
+    return svg(1000, 128, "".join(b), "Experiencia: " + "; ".join(f"{co}, {r} ({d})" for d, co, r in EXPERIENCE), c)
 
 
 def stack(c):
     b = []
+    n = len(STACK)
     for i, (label, value) in enumerate(STACK):
         y = 34 + i * 40
-        b += [T(MX, y, label, "sans t14 mu"), T(200, y, value, "sans t16 ink"), hline(c, MX, RX, y + 18, 0.55)]
-    return svg(1000, 34 + 40 * len(STACK) - 8, "".join(b), "Stack técnico: lenguajes, backend, frontend, bases de datos, IA, arquitectura, herramientas y despliegue", c)
+        b += [T(MX, y, label, "sans t14 mu", anim="rise", delay=i * .06), T(200, y, value, "sans t16 ink", anim="rise", delay=.05 + i * .06),
+              hline(c, MX, RX, y + 18, 0.55, draw=.1 + i * .06),
+              # marcador naranja que recorre las filas, una a una
+              f'<rect class="scan" x="{MX - 14}" y="{y - 13}" width="2" height="18" fill="{c["accent"]}" '
+              f'style="animation-duration:{n * 1.2}s;animation-delay:{i * 1.2}s;opacity:0"/>']
+    return svg(1000, 34 + 40 * n - 8, "".join(b), "Stack técnico: lenguajes, backend, frontend, bases de datos, IA, arquitectura, herramientas y despliegue", c)
 
 
 def footer(c):
-    b = [f'<circle cx="{MX + 6}" cy="55" r="5" fill="{c["accent"]}"/>',
-         T(MX + 26, 62, "Estado · En construcción", "sans t16 ink"),
-         T(MX + 26, 90, "probably in a terminal, probably past midnight", "serif t14 i mu"),
-         T(RX, 90, "Gustavo Navarro  ·  Bucaramanga, CO  ·  © 2026", "sans t14 mu", "end")]
+    b = [dot(c, MX + 6, 55, 5), T(MX + 26, 62, "Estado · En construcción", "sans t16 ink", anim="fade"),
+         T(MX + 26, 90, "probably in a terminal, probably past midnight", "serif t14 i mu", anim="fade", delay=.2),
+         T(RX, 90, "Gustavo Navarro  ·  Bucaramanga, CO  ·  © 2026", "sans t14 mu", "end", anim="fade", delay=.3)]
     return svg(1000, 116, "".join(b), "Estado: construyendo. Bucaramanga, Colombia.", c)
 
 
@@ -430,12 +551,12 @@ def build_all():
     files = {"header-v1": header, "whoami": whoami, "ecosystem": ecosystem, "telemetry": telemetry,
              "github-stats": github_stats, "activity": activity, "timeline": timeline,
              "experience": experience, "stack": stack, "footer": footer}
-    for name, title in SECTIONS:
-        files[name] = section(title)
-    for key, label, _, _ in LINKS:
-        files[key] = link_button(label)
+    for i, (name, title) in enumerate(SECTIONS):
+        files[name] = section(title, i)
+    for i, (key, label, _, _) in enumerate(LINKS):
+        files[key] = link_button(label, i)
     for i, p in enumerate(PROJECTS, 1):
-        files[f"projects/{i:02d}"] = project_row(p)
+        files[f"projects/{i:02d}"] = project_row(p, i - 1)
     for kind in ("live", "live-none", "repo", "repo-private"):
         files[f"projects/{kind}"] = cell(kind)
 
@@ -449,41 +570,41 @@ def build_all():
 
 
 def pic(name, alt, width=None):
+    """<picture> sin hueco vertical: align="top" evita el espacio de línea bajo las imágenes en línea."""
     w = f' width="{width}"' if width else ""
     return (f'<picture><source media="(prefers-color-scheme: dark)" srcset="assets/dark/{name}.svg"/>'
-            f'<img src="assets/{name}.svg"{w} alt="{escape(alt, quote=True)}"/></picture>')
+            f'<img src="assets/{name}.svg"{w} align="top" alt="{escape(alt, quote=True)}"/></picture>')
 
 
 def build_readme():
-    L = ['<div align="center">', "", pic("header-v1", "Gustavo Navarro — Full Stack Developer"), ""]
-    L += [f'<a href="{url}">{pic(key, alt)}</a>' for key, _, url, alt in LINKS]
-    L += ["", "</div>", ""]
+    # Todo en un único párrafo (sin líneas en blanco ni <div>), para que GitHub no añada márgenes entre paneles.
+    L = [pic("header-v1", "Gustavo Navarro — Full Stack Developer"),
+         "".join(f'<a href="{url}">{pic(key, alt, W_LINK)}</a>' for key, _, url, alt in LINKS)]
     titles = dict(SECTIONS)
     L += [pic("s01", titles["s01"]), pic("whoami", "Sobre Gustavo"),
           pic("s02", titles["s02"]), pic("ecosystem", "Mapa del ecosistema de proyectos"),
           pic("s03", titles["s03"])]
     for i, p in enumerate(PROJECTS, 1):
-        row = pic(f"projects/{i:02d}", p["name"], "73%")
+        row = pic(f"projects/{i:02d}", p["name"], W_ROW)
         if p["live"]:
-            row += f'<a href="{p["live"]}">{pic("projects/live", p["name"] + " — sitio en vivo", "13%")}</a>'
+            row += f'<a href="{p["live"]}">{pic("projects/live", p["name"] + " — sitio en vivo", W_CELL)}</a>'
         else:
-            row += pic("projects/live-none", "Sin sitio en vivo", "13%")
+            row += pic("projects/live-none", "Sin sitio en vivo", W_CELL)
         if p["repo"] == PRIVATE:
-            row += pic("projects/repo-private", "Repositorio privado", "13%")
+            row += pic("projects/repo-private", "Repositorio privado", W_CELL)
         else:
-            row += f'<a href="{p["repo"]}">{pic("projects/repo", p["name"] + " — repositorio", "13%")}</a>'
+            row += f'<a href="{p["repo"]}">{pic("projects/repo", p["name"] + " — repositorio", W_CELL)}</a>'
         L.append(row)
-    L += [pic("s04", titles["s04"]), pic("telemetry", "Lenguajes, ritmo de entrega y cifras del perfil"), "",
-          '<div align="center">', "",
-          pic("github-stats", "Estadísticas de GitHub y lenguajes por repositorio", "97%"), "",
-          pic("activity", "Actividad de contribuciones en GitHub", "97%"), "", "</div>", "",
+    L += [pic("s04", titles["s04"]), pic("telemetry", "Lenguajes, ritmo de entrega y cifras del perfil"),
+          pic("github-stats", "Estadísticas de GitHub y lenguajes por repositorio"),
+          pic("activity", "Actividad de contribuciones en GitHub"),
           pic("s05", titles["s05"]), pic("timeline", "Línea de tiempo"), pic("experience", "Experiencia profesional"),
-          pic("s06", titles["s06"]), pic("stack", "Stack técnico"), pic("footer", "Estado actual"), "",
-          "<!-- Generado con tools/build_assets.py: edita los datos allí y vuelve a ejecutarlo. -->", ""]
-    (ROOT / "README.md").write_text("\n".join(L), encoding="utf-8", newline="\n")
+          pic("s06", titles["s06"]), pic("stack", "Stack técnico"), pic("footer", "Estado actual")]
+    text = "\n".join(L) + "\n\n<!-- Generado con tools/build_assets.py: edita los datos allí y vuelve a ejecutarlo. -->\n"
+    (ROOT / "README.md").write_text(text, encoding="utf-8", newline="\n")
 
 
 if __name__ == "__main__":
     n = build_all()
     build_readme()
-    print(f"{n} imágenes × 2 temas + README.md")
+    print(f"{n} imagenes x 2 temas + README.md")
