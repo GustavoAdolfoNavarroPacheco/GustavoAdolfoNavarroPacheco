@@ -321,9 +321,9 @@ def header(c):
     b = [G(square(c, MX, 56, 10, pulse=False), "fade", .1), T(MX + 22, 66, "Portafolio", "sans t14 mu", anim="fade", delay=.1),
          T(RX, 66, "Campuslands S.A.S", "sans t14 mu", "end", anim="fade", delay=.2),
          T(MX - 3, 172, "Gustavo Navarro", "serif t64 ink", anim="rise", delay=.25),
-         T(MX, 216, "Full Stack Developer — Bucaramanga, Santander, Colombia.", "serif t20 mu", anim="rise", delay=.5),
+         T(MX, 216, "Full-Stack Developer · Functional QA · Automation & AI — Girón, Colombia.", "serif t20 mu", anim="rise", delay=.5),
          hline(c, MX, RX, 256, draw=.7), glint(c, MX, RX, 256, 1.5)]
-    return svg(1000, 284, "".join(b), "Gustavo Navarro — Full Stack Developer en Bucaramanga, Colombia", c)
+    return svg(1000, 284, "".join(b), "Gustavo Navarro — Full-Stack Developer, Functional QA, Automation & AI en Girón, Colombia", c)
 
 
 def link_button(label, idx):
@@ -349,20 +349,20 @@ def section(title, idx):
 def whoami(c):
     d = 600   # columna derecha
     b = [T(MX, 52, "Graduated from Campuslands S.A.S", "serif t20 mu", anim="rise", delay=.05),
-         T(MX - 1, 100, "Full Stack Developer", "serif t32 ink", anim="rise", delay=.15),
-         T(MX, 134, "Java · React · SpringBoot · Node.js · HTML & CSS", "sans t16 tx", anim="rise", delay=.25),
+         T(MX - 1, 100, "Full-Stack Developer", "serif t32 ink", anim="rise", delay=.15),
+         T(MX, 134, "Java · TypeScript · React · Next.js · Node.js", "sans t16 tx", anim="rise", delay=.25),
          T(MX, 184, "Drawn to projects where design meets data.", "serif t20 mu", anim="rise", delay=.35),
          T(MX, 212, "Clean architecture and user experience in equal measure.", "serif t20 mu", anim="rise", delay=.45),
          vline(c, d - 24, 32, 232, 0.6, draw=.3),
          T(d, 52, "Enfoque", "sans t14 mu", anim="rise", delay=.3),
          T(d, 82, "Mobile · Full-Stack Systems", "sans t16 ink", anim="rise", delay=.35),
          T(d, 106, "Terminal UI / CLI", "sans t16 ink", anim="rise", delay=.4),
-         T(d, 130, "AI-integrated architectures", "sans t16 ink", anim="rise", delay=.45),
+         T(d, 130, "Functional QA · Automation & AI", "sans t16 ink", anim="rise", delay=.45),
          T(d, 172, "Estado", "sans t14 mu", anim="rise", delay=.5),
          G(square(c, d, 190, 8), "rise", .55),
          T(d + 18, 199, "Open to internships ·", "sans t16 ink", anim="rise", delay=.55),
          T(d + 18, 223, "freelance · collaboration", "sans t16 ink", anim="rise", delay=.6)]
-    return svg(1000, 260, "".join(b), "Sobre Gustavo: Full Stack Developer graduado de Campuslands, abierto a pasantías, freelance y colaboración", c)
+    return svg(1000, 260, "".join(b), "Sobre Gustavo: Full-Stack Developer graduado de Campuslands, abierto a pasantías, freelance y colaboración", c)
 
 
 def ecosystem(c):
@@ -542,8 +542,8 @@ def stack(c):
 def footer(c):
     b = [dot(c, MX + 6, 55, 5), T(MX + 26, 62, "Estado · En construcción", "sans t16 ink", anim="fade"),
          T(MX + 26, 90, "probably in a terminal, probably past midnight", "serif t14 i mu", anim="fade", delay=.2),
-         T(RX, 90, "Gustavo Navarro  ·  Bucaramanga, CO  ·  © 2026", "sans t14 mu", "end", anim="fade", delay=.3)]
-    return svg(1000, 116, "".join(b), "Estado: construyendo. Bucaramanga, Colombia.", c)
+         T(RX, 90, "Gustavo Navarro  ·  Girón, CO  ·  © 2026", "sans t14 mu", "end", anim="fade", delay=.3)]
+    return svg(1000, 116, "".join(b), "Estado: construyendo. Girón, Colombia.", c)
 
 
 # ───────────────────────────── escritura ─────────────────────────────
@@ -578,7 +578,7 @@ def pic(name, alt, width=None):
 
 def build_readme():
     # Todo en un único párrafo (sin líneas en blanco ni <div>), para que GitHub no añada márgenes entre paneles.
-    L = [pic("header-v1", "Gustavo Navarro — Full Stack Developer"),
+    L = [pic("header-v1", "Gustavo Navarro — Full-Stack Developer · Functional QA · Automation & AI"),
          "".join(f'<a href="{url}">{pic(key, alt, W_LINK)}</a>' for key, _, url, alt in LINKS)]
     titles = dict(SECTIONS)
     L += [pic("s01", titles["s01"]), pic("whoami", "Sobre Gustavo"),
